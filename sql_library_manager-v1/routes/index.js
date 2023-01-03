@@ -23,7 +23,7 @@ router.get('/books', async function (req, res, next) {
   try {
     const books = await Book.findAll();
     console.log(books.map(book => book.toJSON()));
-    res.render('index', { title: 'Books' });
+    res.render('index', {books});
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
       const errors = error.errors.map(err => err.message);
