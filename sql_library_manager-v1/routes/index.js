@@ -77,7 +77,10 @@ router.get('/books/:id', async function (req, res, next) {
       await book.update(req.body);
       res.render('update-book', {book});
     } else {
-      res.sendStatus(404);
+      let error = new Error();
+      error.status = 404;
+      error.message = "Page not found!";
+      next();
     }
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
