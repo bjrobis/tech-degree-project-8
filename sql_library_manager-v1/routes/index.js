@@ -53,6 +53,7 @@ router.post('/books/new', async function (req, res, next) {
   let book;
   try {
     book = await Book.create(req.body);
+    res.redirect("/");
     return res.redirect("/");
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
@@ -110,6 +111,7 @@ router.post('/books/:id', async function (req, res, next) {
     }
   }
 });
+
 
 //POST /books/new: update a book in the database
 router.post('/books/:id', async function (req, res, next) {
