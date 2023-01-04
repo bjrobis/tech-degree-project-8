@@ -56,10 +56,15 @@ router.post('/books/new', async function (req, res, next) {
     return res.redirect("/");
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
+<<<<<<< HEAD
       book = await Book.build(req.body);
       book.id = req.params.id; 
       console.error('Validation errors: ', errors);
       return res.render('new-book', {book, errors: error.errors});
+=======
+      const errors = error.errors.map(err => err.message);
+      console.error('Validation errors: ', errors);
+>>>>>>> parent of 86a9647 (add form validation)
     } else {
       throw error;
     }
@@ -67,14 +72,18 @@ router.post('/books/new', async function (req, res, next) {
 });
 
 
-//Renders page to update book in the database
-router.get('/books/:id', async function (req, res, next) {
+//POST /books/new: update a book in the database
+router.post('/books/:id', async function (req, res, next) {
   let book;
   try {
     book = await Book.findByPk(req.params.id);
     if(book) {
       await book.update(req.body);
+<<<<<<< HEAD
       return res.render('update-book', {book});
+=======
+      res.redirect('/books/' + book.id);
+>>>>>>> parent of 86a9647 (add form validation)
     } else {
       let error = new Error();
       error.status = 404;
@@ -91,6 +100,7 @@ router.get('/books/:id', async function (req, res, next) {
   }
 });
 
+<<<<<<< HEAD
 //POST /books/new: update a book in the database
 router.post('/books/:id', async function (req, res, next) {
   let book;
@@ -114,14 +124,21 @@ router.post('/books/:id', async function (req, res, next) {
   }
 });
 
+=======
+>>>>>>> parent of 86a9647 (add form validation)
 
 // POST /books/:id/delete : Deletes a book
 router.post('/books/:id/delete', async function (req, res, next) {
+  const book = await Book.findByPk(req.params.id);
   try {
-    const book = await Book.findByPk(req.params.id);
     if(book) {
+<<<<<<< HEAD
       await book.destroy();
       return res.redirect("/");
+=======
+      await book.destory();
+      res.redirect("/");
+>>>>>>> parent of 86a9647 (add form validation)
     } else {
       return res.sendStatus(404);
     }
