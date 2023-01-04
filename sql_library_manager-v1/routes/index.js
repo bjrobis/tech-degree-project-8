@@ -145,6 +145,7 @@ router.post('/books/:id/delete', async function (req, res, next) {
   }
 });
 
+
 //POST /books/new: update a book in the database
 router.post('/books/:id', async function (req, res, next) {
   let book;
@@ -152,9 +153,9 @@ router.post('/books/:id', async function (req, res, next) {
     book = await Book.findByPk(req.params.id);
     if(book) {
       await book.update(req.body);
-      return res.redirect('/books/');
+      res.redirect('/books/' + book.id);
     } else {
-      throw new Error();
+      res.sendStatus(404);
     }
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
