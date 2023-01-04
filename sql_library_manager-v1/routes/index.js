@@ -22,7 +22,6 @@ router.get('/', async function (req, res, next) {
 router.get('/books', async function (req, res, next) {
   try {
     const books = await Book.findAll({order: [["title", "ASC"]]});
-    console.log(books.map(book => book.toJSON()));
     res.render('index', {books, title: "List of Books"});
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
@@ -54,13 +53,13 @@ router.post('/books/new', async function (req, res, next) {
   let book;
   try {
     book = await Book.create(req.body);
-    res.redirect("/");
+    return res.redirect("/");
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
       book = await Book.build(req.body);
       book.id = req.params.id; 
-      res.render('new-book', {book, errors: error.errors});
-      console.error('Validation errors: ', error);
+      console.error('Validation errors: ', errors);
+      return res.render('new-book', {book, errors: error.errors});
     } else {
       throw error;
     }
@@ -75,9 +74,12 @@ router.get('/books/:id', async function (req, res, next) {
     book = await Book.findByPk(req.params.id);
     if(book) {
       await book.update(req.body);
-      res.render('update-book', {book});
+      return res.render('update-book', {book});
     } else {
-      res.sendStatus(404);
+      let error = new Error();
+      error.status = 404;
+      error.message = 'Page not found'
+      next();
     }
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
@@ -96,7 +98,7 @@ router.post('/books/:id', async function (req, res, next) {
     book = await Book.findByPk(req.params.id);
     if(book) {
       await book.update(req.body);
-      res.redirect('/books/');
+      return res.redirect('/books/');
     } else {
       throw new Error();
     }
@@ -104,8 +106,8 @@ router.post('/books/:id', async function (req, res, next) {
     if (error.name === 'SequelizeValidationError') {
       book = await Book.build(req.body);
       book.id = req.params.id ;
-      res.render('update-book', {book, errors: error.errors});
       console.error('Validation errors: ', error);
+      return res.render('update-book', {book, errors: error.errors});
     } else {
       throw error;
     }
@@ -119,9 +121,9 @@ router.post('/books/:id/delete', async function (req, res, next) {
     const book = await Book.findByPk(req.params.id);
     if(book) {
       await book.destroy();
-      res.redirect("/");
+      return res.redirect("/");
     } else {
-      res.sendStatus(404);
+      return res.sendStatus(404);
     }
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
@@ -134,4 +136,3 @@ router.post('/books/:id/delete', async function (req, res, next) {
 });
 
 module.exports = router;
-
