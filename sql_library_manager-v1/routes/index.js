@@ -57,11 +57,36 @@ router.post('/books/new', async function (req, res, next) {
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
 <<<<<<< HEAD
+<<<<<<< HEAD
       book = await Book.build(req.body);
       book.id = req.params.id; 
       console.error('Validation errors: ', errors);
       return res.render('new-book', {book, errors: error.errors});
 =======
+=======
+      const errors = error.errors.map(err => err.message);
+      console.error('Validation errors: ', errors);
+    } else {
+      throw error;
+    }
+  }
+});
+
+
+//POST /books/new: update a book in the database
+router.post('/books/:id', async function (req, res, next) {
+  let book;
+  try {
+    book = await Book.findByPk(req.params.id);
+    if(book) {
+      await book.update(req.body);
+      res.redirect('/books/' + book.id);
+    } else {
+      res.sendStatus(404);
+    }
+  } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+>>>>>>> parent of 86a9647 (add form validation)
       const errors = error.errors.map(err => err.message);
       console.error('Validation errors: ', errors);
 >>>>>>> parent of 86a9647 (add form validation)
@@ -72,6 +97,7 @@ router.post('/books/new', async function (req, res, next) {
 });
 
 
+<<<<<<< HEAD
 //POST /books/new: update a book in the database
 router.post('/books/:id', async function (req, res, next) {
   let book;
@@ -89,6 +115,17 @@ router.post('/books/:id', async function (req, res, next) {
       error.status = 404;
       error.message = 'Page not found'
       next();
+=======
+// POST /books/:id/delete : Deletes a book
+router.post('/books/:id/delete', async function (req, res, next) {
+  const book = await Book.findByPk(req.params.id);
+  try {
+    if(book) {
+      await book.destory();
+      res.redirect("/");
+    } else {
+      res.sendStatus(404);
+>>>>>>> parent of 86a9647 (add form validation)
     }
   } catch (error) {
     if (error.name === 'SequelizeValidationError') {
